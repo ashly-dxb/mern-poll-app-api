@@ -1,6 +1,9 @@
+require("dotenv").config();
+
 const tasks = require("./routes/tasks");
 const users = require("./routes/users");
 const polls = require("./routes/polls");
+
 const connection = require("./db");
 
 const express = require("express");
@@ -43,6 +46,7 @@ app.use(
   })
 );
 
+//include all the database tables/models
 app.use("/api/tasks", tasks);
 app.use("/api/users", users);
 app.use("/api/polls", polls);
