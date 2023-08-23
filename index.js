@@ -41,6 +41,7 @@ app.use(
     name: "secret.ckname",
     cookie: {
       secure: false,
+      SameSite: "None",
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
