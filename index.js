@@ -40,7 +40,7 @@ app.use(
     // store: store,
     name: "secret.ckname",
     cookie: {
-      secure: true, // required for cookies to work on HTTPS
+      secure: false, // required for cookies to work on HTTPS
       httpOnly: false,
       sameSite: "none",
       maxAge: 1000 * 60 * 60 * 24,
