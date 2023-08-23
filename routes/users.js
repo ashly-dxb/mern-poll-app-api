@@ -27,7 +27,7 @@ verifyUser = (req, res, next) => {
 };
 
 /* Check auth in each page */
-router.get("/", verifyUser, (req, res) => {
+router.get("/checkauth", verifyUser, (req, res) => {
   return res.json({ valid: true, name: req.name });
 });
 
