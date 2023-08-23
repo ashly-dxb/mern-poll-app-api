@@ -30,17 +30,17 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// const store = new session.MemoryStore();
+const store = new session.MemoryStore();
 
 app.use(
   session({
     secret: "my-secret-key",
     resave: false,
     saveUninitialized: true,
-    // store: store,
+    store: store,
     name: "secret.ckname",
     cookie: {
-      secure: false, // required for cookies to work on HTTPS
+      secure: false,
       maxAge: 1000 * 60 * 60 * 24,
     },
   })
