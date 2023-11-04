@@ -37,7 +37,7 @@ app.use(
     secret: "my-secret-key",
     resave: false,
     saveUninitialized: true,
-    store: store,
+    // store: store,
     name: "secret.ckname",
     cookie: {
       secure: true,
