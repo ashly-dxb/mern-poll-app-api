@@ -21,6 +21,7 @@ module.exports = async () => {
     await mongoose.connect(dbURL, connectionParams);
 
     console.log("Connected to MongoDB database.");
+    
     console.log(
       "MyTest",
       "345MosattuKittyu@*$#HeK" + process.env.MONGODB_PASS + "304030!!*%K"

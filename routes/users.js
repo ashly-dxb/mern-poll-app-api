@@ -90,7 +90,7 @@ router.post("/login", async (req, res) => {
               expiresIn: "60m",
             });
 
-            res.cookie("token", token);
+            res.cookie("token", token, { httpOnly: false, secure: true });
 
             return res.json({
               authenticated: true,

@@ -30,7 +30,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const store = new session.MemoryStore();
+// const store = new session.MemoryStore();
 
 app.use(
   session({
@@ -41,7 +41,7 @@ app.use(
     name: "secret.ckname",
     cookie: {
       secure: true,
-      SameSite: "None",
+      sameSite: "None",
       maxAge: 1000 * 60 * 60 * 24,
     },
   })

@@ -1,0 +1,6 @@
+
+
+
+TO START SERVER:
+
+nodemon index.js
