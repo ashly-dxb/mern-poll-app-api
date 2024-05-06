@@ -138,49 +138,48 @@ router.post("/change-password", (req, res) => {
   }
 
   const email = req.session.email;
+
   console.log(
     "############## session mail ::",
     req.session.email,
     "##############"
   );
 
-  User.findOne({ email: email }).then((result) => {
-    if (result) {
-      // console.log(result);
-      console.log("CURRENT", req.body.currentPassword);
+  User.findOne({ email: email })
+    .then((result) => {
+      if (result) {
+        console.log("CURRENT", req.body.currentPassword);
 
-      bcrypt.compare(
-        req.body.currentPassword.toString(),
-        result.password,
-        async (err, response) => {
-          if (response) {
-            // console.log("** PASSWORD MATCHES **", result.id);
+        bcrypt.compare(
+          req.body.currentPassword.toString(),
+          result.password,
+          async (err, response) => {
+            if (response) {
+              bcrypt.hash(
+                req.body.newPassword.toString(),
+                salt,
+                async (err, hash) => {
+                  const user = await User.findOneAndUpdate(
+                    { _id: result.id },
+                    { password: hash }
+                  );
 
-            bcrypt.hash(
-              req.body.newPassword.toString(),
-              salt,
-              async (err, hash) => {
-                const user = await User.findOneAndUpdate(
-                  { _id: result.id },
-                  { password: hash }
-                );
+                  console.log("NEW : ", req.body.newPassword);
 
-                console.log("NEW : ", req.body.newPassword);
-
-                return res.json({ success: true, user });
-              }
-            );
-          } else {
-            // console.log("****** PASSWORD NOT MATCH ****");
-            return res.json({
-              success: false,
-              errorMsg: "Current Password is invalid",
-            });
+                  return res.json({ success: true, user });
+                }
+              );
+            } else {
+              return res.json({
+                success: false,
+                errorMsg: "Current Password is invalid",
+              });
+            }
           }
-        }
-      );
-    }
-  });
+        );
+      }
+    })
+    .catch((err) => console.log(err));
 });
 
 module.exports = router;
