@@ -34,7 +34,7 @@ verifyUser = (req, res, next) => {
   // });
 };
 
-/* Check auth in each page */
+/* Check authentication in each page */
 router.get("/checkauth", verifyUser, (req, res) => {
   return res.json({ valid: true, name: req.name });
 });
@@ -92,12 +92,12 @@ router.post("/login", async (req, res) => {
             req.session.email = user.email;
             req.session.save();
 
-            //store the token in cookie
             // const name = user.name;
             const token = jwt.sign({ name: user.name }, "jwt-secret", {
-              expiresIn: "60m",
+              expires: new Date(Date.now() + 25892000000),
             });
 
+            //store the token in cookie
             res.cookie("access_token", token, { httpOnly: true, secure: true });
 
             return res.json({
