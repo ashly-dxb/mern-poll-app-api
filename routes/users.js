@@ -10,20 +10,28 @@ const salt = 10;
 
 /* Check auth in each page access */
 verifyUser = (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.cookies.access_token;
 
   if (!token) {
     return res.json({ valid: false, Error: "You are not authenticated" });
-  } else {
-    jwt.verify(token, "jwt-secret", (err, decoded) => {
-      if (err) {
-        return res.json({ valid: false, Error: "Token is not OK" });
-      } else {
-        req.name = decoded.name;
-        next();
-      }
-    });
   }
+
+  try {
+    const data = jwt.verify(token, "jwt-secret");
+    req.userName = data.name;
+    return next();
+  } catch {
+    return res.json({ valid: false, Error: "Token is not OK" });
+  }
+
+  // jwt.verify(token, "jwt-secret", (err, decoded) => {
+  //   if (err) {
+  //     return res.json({ valid: false, Error: "Token is not OK" });
+  //   } else {
+  //     req.name = decoded.name;
+  //     next();
+  //   }
+  // });
 };
 
 /* Check auth in each page */
@@ -85,12 +93,12 @@ router.post("/login", async (req, res) => {
             req.session.save();
 
             //store the token in cookie
-            const name = user.name;
-            const token = jwt.sign({ name }, "jwt-secret", {
+            // const name = user.name;
+            const token = jwt.sign({ name: user.name }, "jwt-secret", {
               expiresIn: "60m",
             });
 
-            res.cookie("token", token, { httpOnly: false, secure: true });
+            res.cookie("access_token", token, { httpOnly: true, secure: true });
 
             return res.json({
               authenticated: true,
@@ -118,7 +126,7 @@ router.post("/login", async (req, res) => {
 
 /* Logout from the app */
 router.get("/logout", (req, res) => {
-  res.clearCookie("token");
+  res.clearCookie("access_token");
   req.session.destroy();
 
   res.json({
