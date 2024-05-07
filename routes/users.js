@@ -12,9 +12,9 @@ const salt = 10;
 verifyUser = (req, res, next) => {
   const token = req.cookies.access_token;
 
-  if (!token) {
-    return res.json({ valid: false, Error: "You are not authenticated" });
-  }
+  // if (!token) {
+  //   return res.json({ valid: false, Error: "You are not authenticated" });
+  // }
 
   try {
     const data = jwt.verify(token, "jwt-secret");
