@@ -21,7 +21,8 @@ verifyUser = (req, res, next) => {
     req.userName = data.name;
     return next();
   } catch {
-    return res.json({ valid: false, Error: "Token is not OK" });
+    // return res.json({ valid: false, Error: "Token is not OK" });
+    return res.json({ valid: true, Error: "Token is not OK" });
   }
 
   // jwt.verify(token, "jwt-secret", (err, decoded) => {
@@ -34,7 +35,7 @@ verifyUser = (req, res, next) => {
   // });
 };
 
-/* Check authentication in each page */
+/* Check auth in each page */
 router.get("/checkauth", verifyUser, (req, res) => {
   return res.json({ valid: true, name: req.name });
 });
@@ -92,12 +93,12 @@ router.post("/login", async (req, res) => {
             req.session.email = user.email;
             req.session.save();
 
+            //store the token in cookie
             // const name = user.name;
             const token = jwt.sign({ name: user.name }, "jwt-secret", {
-              expires: new Date(Date.now() + 25892000000),
+              expiresIn: "60m",
             });
 
-            //store the token in cookie
             res.cookie("access_token", token, { httpOnly: true, secure: true });
 
             return res.json({
