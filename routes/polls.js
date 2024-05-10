@@ -34,7 +34,7 @@ delay = (delayMilliSec) => {
 
 router.get("/listpoll", async (req, res) => {
   console.log("GET listpoll STARTING");
-  await delay(3000);
+  // await delay(3000);
   console.log("GET listpoll : delay over");
 
   try {

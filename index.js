@@ -8,8 +8,6 @@ const connection = require("./db");
 
 const express = require("express");
 const cors = require("cors");
-// const bcrypt = require("bcrypt");
-// const jwt = require("jsonwebtoken");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
@@ -31,6 +29,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // const store = new session.MemoryStore();
+
+// app.use(session({ secret: "keyboard cat", cookie: { maxAge: 60000 } }));
 
 app.use(
   session({

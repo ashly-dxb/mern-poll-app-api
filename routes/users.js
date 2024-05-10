@@ -12,24 +12,33 @@ const salt = 10;
 verifyUser = (req, res, next) => {
   const token = req.cookies.access_token;
 
+  console.log("My Token: ", token);
+  console.log("My Session: ", req.session);
+
   // if (!token) {
-  //   return res.json({ valid: false, Error: "You are not authenticated" });
+  //   return res.json({ isValid: false, message: "You are not authenticated" });
   // }
 
   try {
-    const data = jwt.verify(token, "jwt-secret");
-    req.userName = data.name;
-    return next();
-  } catch {
-    // return res.json({ valid: false, Error: "Token is not OK" });
-    return res.json({ valid: true, Error: "Token is not OK" });
+    const decoded = jwt.verify(token, "jwt-secret");
+    req.userName = decoded.name;
+    req.userEmail = decoded.email;
+    req.isValid = true;
+    req.message = "TokenVerified";
+    next();
+  } catch (error) {
+    // return res.json({ isValid: false, message: "Token is not OK" });
+    console.log("### AUTHENTICATION ERROR ###", error);
+    return res.json({ isValid: false, message: "Token is not OK" });
   }
 
   // jwt.verify(token, "jwt-secret", (err, decoded) => {
   //   if (err) {
-  //     return res.json({ valid: false, Error: "Token is not OK" });
+  //     return res.json({ isValid: false, message: "Token is not OK" });
   //   } else {
-  //     req.name = decoded.name;
+  //     req.userName = decoded.name;
+  //     req.userEmail = decoded.email;
+  //     req.isValid = false;
   //     next();
   //   }
   // });
@@ -37,7 +46,11 @@ verifyUser = (req, res, next) => {
 
 /* Check auth in each page */
 router.get("/checkauth", verifyUser, (req, res) => {
-  return res.json({ valid: true, name: req.name });
+  return res.json({
+    valid: req.isValid,
+    message: req.message,
+    name: req.userName,
+  });
 });
 
 /* Sign Up/register to the app */
@@ -72,7 +85,7 @@ router.post("/login", async (req, res) => {
     return res.json({
       authenticated: false,
       status: "email missing",
-      error: "Please enter email",
+      error: "Please enter your email",
     });
   }
 
@@ -80,40 +93,51 @@ router.post("/login", async (req, res) => {
     return res.json({
       authenticated: false,
       status: "password missing",
-      error: "Please enter password",
+      error: "Please enter your password",
     });
   }
 
   User.findOne({ email: email })
     .then((user) => {
       if (user) {
-        bcrypt.compare(password.toString(), user.password, (err, response) => {
-          if (response) {
-            req.session.name = user.name;
-            req.session.email = user.email;
-            req.session.save();
+        bcrypt.compare(
+          password.toString(),
+          user.password,
+          async (err, response) => {
+            if (response) {
+              console.log("USER from DB:", user);
 
-            //store the token in cookie
-            // const name = user.name;
-            const token = jwt.sign({ name: user.name }, "jwt-secret", {
-              expiresIn: "60m",
-            });
+              req.session.name = user.name;
+              req.session.email = user.email;
+              await req.session.save();
 
-            res.cookie("access_token", token, { httpOnly: true, secure: true });
+              //store the token in cookie
+              // const name = user.name;
+              const token = jwt.sign({ name: user.name }, "jwt-secret", {
+                expiresIn: "60m",
+              });
 
-            return res.json({
-              authenticated: true,
-              status: "Login Successful",
-              user: user,
-            });
-          } else {
-            return res.json({
-              authenticated: false,
-              status: "Email and Password not matched",
-              error: "Email and Password not matched",
-            });
+              res.cookie("access_token", token, {
+                httpOnly: true,
+                secure: true,
+              });
+
+              console.log(req.session);
+
+              return res.json({
+                authenticated: true,
+                status: "Login Successful",
+                user: user,
+              });
+            } else {
+              return res.json({
+                authenticated: false,
+                status: "Email and Password not matched",
+                error: "Email and Password are not matching",
+              });
+            }
           }
-        });
+        );
       } else {
         res.json({
           authenticated: false,
@@ -127,6 +151,7 @@ router.post("/login", async (req, res) => {
 
 /* Logout from the app */
 router.get("/logout", (req, res) => {
+  console.log(req.session);
   res.clearCookie("access_token");
   req.session.destroy();
 
@@ -139,6 +164,8 @@ router.get("/logout", (req, res) => {
 
 /* change password */
 router.post("/change-password", (req, res) => {
+  console.log("BODY:::::", req.body);
+
   if (req.body.newPassword != req.body.confirmPassword) {
     return res.json({
       success: false,
@@ -148,11 +175,7 @@ router.post("/change-password", (req, res) => {
 
   const email = req.session.email;
 
-  console.log(
-    "############## session mail ::",
-    req.session.email,
-    "##############"
-  );
+  console.log("######### session", req.session);
 
   User.findOne({ email: email })
     .then((result) => {
