@@ -118,8 +118,10 @@ router.post("/login", async (req, res) => {
               });
 
               res.cookie("access_token", token, {
+                expires: new Date(Date.now() + 3600 * 1000 * 24 * 180 * 1),
                 httpOnly: true,
                 secure: true,
+                sameSite: "None",
               });
 
               console.log(req.session);
