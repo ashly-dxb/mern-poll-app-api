@@ -105,7 +105,7 @@ router.post("/login", async (req, res) => {
           user.password,
           async (err, response) => {
             if (response) {
-              console.log("USER from DB:", user);
+              // console.log("USER from DB:", user);
 
               req.session.name = user.name;
               req.session.email = user.email;
@@ -114,7 +114,7 @@ router.post("/login", async (req, res) => {
               //store the token in cookie
               // const name = user.name;
               const token = jwt.sign({ name: user.name }, "jwt-secret", {
-                expiresIn: "60m",
+                expiresIn: "8h",
               });
 
               res.cookie("access_token", token, {
@@ -124,7 +124,7 @@ router.post("/login", async (req, res) => {
                 sameSite: "None",
               });
 
-              console.log(req.session);
+              // console.log(req.session);
 
               return res.json({
                 authenticated: true,
@@ -166,7 +166,7 @@ router.get("/logout", (req, res) => {
 
 /* change password */
 router.post("/change-password", (req, res) => {
-  console.log("BODY:::::", req.body);
+  // console.log("BODY:::::", req.body);
 
   if (req.body.newPassword != req.body.confirmPassword) {
     return res.json({
@@ -198,7 +198,7 @@ router.post("/change-password", (req, res) => {
                     { password: hash }
                   );
 
-                  console.log("NEW : ", req.body.newPassword);
+                  // console.log("NEW : ", req.body.newPassword);
 
                   return res.json({ success: true, user });
                 }
