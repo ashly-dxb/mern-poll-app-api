@@ -17,7 +17,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// file delete
 var fs = require("fs");
 
 // ###########################################################################################
@@ -45,7 +44,7 @@ router.get("/details/:id", async (req, res) => {
 });
 
 // ###########################################################################################
-/* preview */
+/* Preview a file */
 router.get("/preview/:filename", function (req, res) {
   res.sendFile(process.cwd() + "\\uploaded\\" + req.params.filename);
 });
@@ -66,7 +65,7 @@ router.get("/download/:filename", async (req, res) => {
 });
 
 // ###########################################################################################
-/* upload a file */
+/* Upload a file */
 router.post("/uploadfile", upload.array("uploadedfiles"), (req, res) => {
   // res.json({ files: req.files, desc: req.body.description });
 

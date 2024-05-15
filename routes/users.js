@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 
 const salt = 10;
 
-/* Check auth in each page access */
+// ############################## /* Check auth in each page access */ ##############################
 verifyUser = (req, res, next) => {
   const token = req.cookies.access_token;
 
@@ -44,7 +44,7 @@ verifyUser = (req, res, next) => {
   // });
 };
 
-/* Check auth in each page */
+// ############################## /* Check Auth in each page */ ##############################
 router.get("/checkauth", verifyUser, (req, res) => {
   return res.json({
     valid: req.isValid,
@@ -53,7 +53,7 @@ router.get("/checkauth", verifyUser, (req, res) => {
   });
 });
 
-/* Sign Up/register to the app */
+// ############################## /* Sign Up/register to the app */ ##############################
 router.post("/register", (req, res) => {
   bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
     if (err) {
@@ -77,7 +77,7 @@ router.post("/register", (req, res) => {
   });
 });
 
-/* Login to the app */
+// ############################## /* Login to the app */ ##############################
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -151,7 +151,7 @@ router.post("/login", async (req, res) => {
     .catch((err) => console.log(err));
 });
 
-/* Logout from the app */
+// ############################## /* Logout from the app */ ##############################
 router.get("/logout", (req, res) => {
   console.log(req.session);
   res.clearCookie("access_token");
@@ -164,7 +164,7 @@ router.get("/logout", (req, res) => {
   });
 });
 
-/* change password */
+// ############################## /* Change password */ ##############################
 router.post("/change-password", (req, res) => {
   // console.log("BODY:::::", req.body);
 
