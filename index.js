@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: ["http://localhost:3000", "https://mern-poll-app.onrender.com"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
     credentials: true,
   })
 );
@@ -68,4 +68,5 @@ app.use("/api/polls", polls);
 app.use("/api/files", fileUploads);
 
 const port = process.env.PORT || 8080;
+
 app.listen(port, () => console.log(`Server Listening on Port ${port}`));

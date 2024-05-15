@@ -6,7 +6,6 @@ const router = express.Router();
 router.get("/", async (req, res) => {
   try {
     const tasks = await Task.find().sort({ created_date: -1 }).exec(); //                 // .limit(5)
-
     res.send(tasks);
   } catch (error) {
     res.send(error);

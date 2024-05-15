@@ -92,9 +92,57 @@ router.post("/uploadfile", upload.array("uploadedfiles"), (req, res) => {
 });
 
 // ###########################################################################################
-/* delete a file */
-router.post("/delete", (req, res) => {
-  FileUpload.findOneAndRemove({ _id: req.body.key })
+/* Update a file details completely */
+router.put("/modifyfull/:fileID", async (req, res) => {
+  const fileID = req.params.fileID;
+  const updateObj = req.body;
+  console.log("PUT", updateObj);
+
+  try {
+    const fileDetails = await FileUpload.findOneAndUpdate(
+      { _id: fileID },
+      updateObj
+    );
+    res.send({ success: true });
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// ###########################################################################################
+/* Update a file desc */
+router.patch("/modify/:fileID", async (req, res) => {
+  console.log("START patch call");
+  const fileID = req.params.fileID;
+  const updateObj = req.body;
+  console.log("PATCH", updateObj);
+
+  try {
+    const fileDetails = await FileUpload.findOneAndUpdate(
+      { _id: fileID },
+      updateObj
+    );
+    res.send({ success: true });
+  } catch (error) {
+    res.send(error);
+  }
+
+  /*
+  FileUpload.findOneAndUpdate({ _id: fileID }, req.body)
+    .then((response) => {
+      res.send({ success: true });
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+    */
+});
+
+// ###########################################################################################
+/* Delete a file */
+router.delete("/delete/:fileID", (req, res) => {
+  let fileID = req.params.fileID;
+  FileUpload.findOneAndRemove({ _id: fileID })
     .then((response) => {
       fs.rmSync(process.cwd() + "/uploaded/" + response.filename, {
         force: true,
