@@ -14,22 +14,12 @@ const router = express.Router();
 
 router.get("/test", (req, res) => res.send("Hello World"));
 
-router.get("/getpoll/:id", async (req, res) => {
-  const pollID = req.params.id;
-  try {
-    const pollDetail = await Poll.findOne({ pollID: pollID }).lean().exec();
-    res.send(pollDetail);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
 delay = (delayMilliSec) => {
   return new Promise((resolve) => setTimeout(resolve, delayMilliSec));
 };
 
-router.get("/listpoll", async (req, res) => {
-  // await delay(3000);
+router.get("/list", async (req, res) => {
+  // await delay(1000);
   try {
     // const polls = await Poll.find().lean().exec();
     const polls = await Poll.aggregate([
@@ -58,9 +48,19 @@ router.get("/listpoll", async (req, res) => {
       },
       { $sort: { totalVotes: -1 } },
     ]);
-    // .lean()
-    // .exec();
+
     res.send(polls);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.get("/details/:pollID", async (req, res) => {
+  const pollID = req.params.pollID;
+
+  try {
+    const pollDetail = await Poll.findOne({ pollID: pollID }).lean().exec();
+    res.send(pollDetail);
   } catch (error) {
     res.send(error);
   }
@@ -75,13 +75,6 @@ router.post("/createpoll", async (req, res) => {
     question: req.body.question.question,
     options: req.body.options,
   });
-
-  // try {
-  //   const poll = await new Poll(data).save();
-  //   res.send(poll);
-  // } catch (error) {
-  //   res.send(error);
-  // }
 
   data
     .save()
@@ -98,7 +91,7 @@ router.post("/createpoll", async (req, res) => {
     });
 });
 
-router.post("/editpoll", async (req, res) => {
+router.post("/modify", async (req, res) => {
   const pollID = req.body.pollID;
   const x = req.body.question.question;
   const y = req.body.options;
@@ -113,13 +106,12 @@ router.post("/editpoll", async (req, res) => {
   } catch (error) {
     res.send(error);
   }
-
-  // .then((response) => res.send(response))
-  // .catch((error) => res.send(error));
 });
 
-router.post("/deletepoll", (req, res) => {
-  Poll.findOneAndRemove({ _id: req.body.key })
+router.delete("/delete/:pollID", (req, res) => {
+  let pollID = req.params.pollID;
+
+  Poll.findOneAndRemove({ _id: pollID })
     .then((response) => {
       res.send({ success: true });
     })

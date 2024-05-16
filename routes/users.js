@@ -117,6 +117,8 @@ router.post("/login", async (req, res) => {
                 expiresIn: "8h",
               });
 
+              console.log("SESSION MAIL##############", req.session.email);
+
               res.cookie("access_token", token, {
                 expires: new Date(Date.now() + 3600 * 1000 * 24 * 180 * 1),
                 httpOnly: true,
@@ -134,7 +136,7 @@ router.post("/login", async (req, res) => {
             } else {
               return res.json({
                 authenticated: false,
-                status: "Email and Password not matched",
+                status: "Email and Password not matching",
                 error: "Email and Password are not matching",
               });
             }
@@ -171,15 +173,16 @@ router.post("/change-password", (req, res) => {
   if (req.body.newPassword != req.body.confirmPassword) {
     return res.json({
       success: false,
-      errorMsg: "New Password and Confirm Password are not matched",
+      errorMsg: "New Password and Re-entered Password are not matching",
     });
   }
 
-  const email = req.session.email;
+  // const emailSess = req.session.email;
+  const emailSess = "ashlythomas@gmail.com";
 
   console.log("######### session", req.session);
 
-  User.findOne({ email: email })
+  User.findOne({ email: emailSess })
     .then((result) => {
       if (result) {
         console.log("CURRENT", req.body.currentPassword);

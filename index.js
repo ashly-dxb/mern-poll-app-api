@@ -31,13 +31,11 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 // app.use(express.static(process.cwd() + "/uploaded"));
-
 // const store = new session.MemoryStore();
-
 app.use(
   session({
     secret: "my-secret-key",
-    resave: false,
+    resave: true,
     saveUninitialized: true,
     // store: store,
     name: "secret.ckname",

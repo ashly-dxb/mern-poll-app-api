@@ -5,8 +5,19 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const tasks = await Task.find().sort({ created_date: -1 }).exec(); //                 // .limit(5)
+    const tasks = await Task.find().sort({ created_date: -1 }).exec(); //  .limit(5)
     res.send(tasks);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  const taskID = req.params.id;
+
+  try {
+    const details = await Task.findOne({ _id: taskID }).lean().exec();
+    res.send(details);
   } catch (error) {
     res.send(error);
   }
